@@ -1,5 +1,14 @@
 {
-  "en": ["sopuli.xyz", "lemmy.world", "sh.itjust.works"],
+  "en": [
+    "sopuli.xyz",
+    "sh.itjust.works",
+    "lemmy.fmhy.ml",
+    "discuss.tchncs.de",
+    "lemm.ee",
+    "reddthat.com",
+    "discuss.online",
+    "lemmy.fmhy.net"
+  ],
   "fr": ["sh.itjust.works"],
   "da": ["feddit.dk"],
   "de": ["feddit.de", "discuss.tchncs.de"],
@@ -15,6 +24,9 @@
     "ds9.lemmy.ml",
     "voyager.lemmy.ml",
     "enterprise.lemmy.ml",
-    "nrsk.no"
+    "nrsk.no",
+    "burggit.moe",
+    "lemmy.burger.rodeo",
+    "bakchodi.org"
   ]
 }
