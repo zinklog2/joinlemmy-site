@@ -4,9 +4,7 @@ import { Helmet } from "inferno-helmet";
 import { DonateLines } from "./donate-lines";
 import { i18n } from "../i18next";
 import { T } from "inferno-i18next";
-import { getDocsLanguage, isBrowser } from "../utils";
-
-const title = i18n.t("lemmy_title");
+import { isBrowser } from "../utils";
 
 export class Main extends Component<any, any> {
   constructor(props: any, context: any) {
@@ -30,9 +28,7 @@ export class Main extends Component<any, any> {
     return (
       <a
         class="button primary"
-        href={`/docs/${getDocsLanguage(
-          i18n.language
-        )}/administration/administration.html`}
+        href={`/docs/administration/administration.html`}
       >
         {i18n.t("run_a_server")}
       </a>
@@ -40,6 +36,7 @@ export class Main extends Component<any, any> {
   }
 
   render() {
+    const title = i18n.t("lemmy_title");
     return (
       <div>
         <Helmet title={title}>
@@ -147,14 +144,7 @@ export class Main extends Component<any, any> {
               <h2>{i18n.t("create_discussion_platform")}</h2>
               <p>
                 <T i18nKey="create_discussion_platform_desc">
-                  #
-                  <a
-                    href={`/docs/${getDocsLanguage(
-                      i18n.language
-                    )}/administration/administration.html`}
-                  >
-                    #
-                  </a>
+                  #<a href={`/docs/administration/administration.html`}>#</a>
                   <i>#</i>
                   <a href="https://en.wikipedia.org/wiki/Fediverse">#</a>
                 </T>
@@ -194,21 +184,8 @@ export class Main extends Component<any, any> {
               <ul class="is-marginless">
                 <li>
                   <T i18nKey="self_hostable">
-                    #
-                    <a
-                      href={`/docs/${getDocsLanguage(
-                        i18n.language
-                      )}/administration/install_docker.html`}
-                    >
-                      #
-                    </a>
-                    <a
-                      href={`/docs/${getDocsLanguage(
-                        i18n.language
-                      )}/administration/install_ansible.html`}
-                    >
-                      #
-                    </a>
+                    #<a href={`/docs/administration/install_docker.html`}>#</a>
+                    <a href={`/docs/administration/install_ansible.html`}>#</a>
                   </T>
                 </li>
                 <li>{i18n.t("clean_interface")}</li>
@@ -240,7 +217,7 @@ export class Main extends Component<any, any> {
                 <li>
                   <T i18nKey="i18n_support">
                     #
-                    <a href="https://weblate.yerbamate.ml/projects/lemmy/lemmy/">
+                    <a href="https://weblate.join-lemmy.org/projects/lemmy/lemmy/">
                       #
                     </a>
                   </T>

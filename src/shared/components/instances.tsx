@@ -4,14 +4,26 @@ import { i18n } from "../i18next";
 import { instance_stats } from "../instance_stats";
 import { numToSI } from "../utils";
 
-const title = i18n.t("join_title");
-
 export class Instances extends Component<any, any> {
   constructor(props: any, context: any) {
     super(props, context);
   }
 
+  biasedRandom(active_users, avg, max) {
+    // Lets introduce a better bias to random shuffle instances list
+    var influence = 1.25;
+    var rnd = Math.random() * (max / influence) + active_users;
+    var mix = Math.random() * influence;
+    return rnd * (1 - mix) + avg * mix;
+  }
+
+  averageFunc(values: any) {
+    return values.reduce((a, b) => a + b) / values.length;
+  }
+
   render() {
+    const title = i18n.t("join_title");
+
     var recommended_instances = instance_stats.recommended[i18n.language];
     if (!recommended_instances) {
       recommended_instances = instance_stats.recommended["en"];
@@ -19,19 +31,39 @@ export class Instances extends Component<any, any> {
 
     var recommended = [];
     var remaining = [];
+    var values = [];
+
     for (var i of instance_stats.stats.instance_details) {
       if (recommended_instances.indexOf(i.domain) > -1) {
         recommended.push(i);
       } else {
         remaining.push(i);
       }
+
+      values.push(i.site_info.site_view.counts.users_active_month);
     }
-    // shuffle recommended instances list into random order
-    // https://stackoverflow.com/a/46545530
+
+    // Use these values for the shuffle
+    const avgMonthlyUsers = this.averageFunc(values);
+    const maxMonthlyUsers = Math.max(...values);
+
     let recommended2 = recommended
       .map(value => ({ value, sort: Math.random() }))
       .sort((a, b) => a.sort - b.sort)
       .map(({ value }) => value);
+
+    // BIASED sorting for instances, based on the min/max of users_active_month
+    let remaining2 = remaining
+      .map(i => ({
+        instance: i,
+        sort: this.biasedRandom(
+          i.site_info.site_view.counts.users_active_month,
+          avgMonthlyUsers,
+          maxMonthlyUsers,
+        ),
+      }))
+      .sort((a, b) => b.sort - a.sort)
+      .map(({ instance }) => instance);
 
     return (
       <div class="container">
@@ -43,7 +75,7 @@ export class Instances extends Component<any, any> {
         <br />
         <br />
         {this.renderList(i18n.t("recommended_instances"), recommended2)}
-        {this.renderList(i18n.t("popular_instances"), remaining)}
+        {this.renderList(i18n.t("popular_instances"), remaining2)}
       </div>
     );
   }
@@ -58,11 +90,6 @@ export class Instances extends Component<any, any> {
         <p>
           {i18n.t("instance_comparison")}:
           <ul>
-            <li>
-              <a href="https://github.com/maltfield/awesome-lemmy-instances">
-                Awesome-Lemmy-Instances on GitHub
-              </a>
-            </li>
             <li>
               <a href="https://the-federation.info/platform/73">
                 the-federation.info Lemmy Instances Page
@@ -88,25 +115,13 @@ export class Instances extends Component<any, any> {
         <div class="row">
           {instances.map(instance => {
             let domain = instance.domain;
-            let users_active_month =
-              instance.site_info.site_view.counts.users_active_month;
             let description = instance.site_info.site_view.site.description;
             let icon = instance.site_info.site_view.site.icon;
-            let require_application =
-              instance.site_info.site_view.site.require_application;
             return (
               <div class="card col-6">
                 <header>
                   <div class="row">
                     <h4 class="col">{domain}</h4>
-                    <h4 class="col text-right">
-                      <i>
-                        {i18n.t("users_active_per_month", {
-                          count: users_active_month,
-                          formattedCount: numToSI(users_active_month),
-                        })}
-                      </i>
-                    </h4>
                   </div>
                 </header>
                 <div class="is-center">
@@ -118,15 +133,9 @@ export class Instances extends Component<any, any> {
                 <br />
                 <p class="join-desc">{description}</p>
                 <footer>
-                  {require_application ? (
-                    <a class="button primary" href={`https://${domain}`}>
-                      {i18n.t("apply_to_join")}
-                    </a>
-                  ) : (
-                    <a class="button primary" href={`https://${domain}`}>
-                      {i18n.t("join")}
-                    </a>
-                  )}
+                  <a class="button primary" href={`https://${domain}`}>
+                    {i18n.t("browse_instance")}
+                  </a>
                 </footer>
               </div>
             );

@@ -7,18 +7,15 @@ WORKDIR /app/lemmy-docs
 RUN ./update-includes.sh
 
 # Build the docs
-FROM rust:1.63-slim as docs
+FROM alpine:3 as docs
 WORKDIR /app
-RUN cargo install mdbook \
-  --git https://github.com/Ruin0x11/mdBook.git \
-  --branch localization \
-  --rev 9d8147c
+RUN wget -O mdbook.tar.gz https://github.com/rust-lang/mdBook/releases/download/v0.4.30/mdbook-v0.4.30-x86_64-unknown-linux-musl.tar.gz
+RUN tar -xzf mdbook.tar.gz
 COPY lemmy-docs ./lemmy-docs
-COPY --from=docs_include /app/lemmy-docs/include /app/lemmy-docs/include
-RUN mdbook build lemmy-docs -d ../docs
+RUN ./mdbook build lemmy-docs -d ../docs
 
 # Build the typedoc API docs
-FROM node:14-alpine as api
+FROM node:alpine as api
 WORKDIR /app
 COPY lemmy-js-client lemmy-js-client
 WORKDIR /app/lemmy-js-client
@@ -26,7 +23,7 @@ RUN yarn
 RUN yarn docs
 
 # Build the isomorphic app
-FROM node:14-alpine as builder
+FROM node:alpine as builder
 RUN apk update && apk add yarn python3 build-base gcc wget git --no-cache
 
 WORKDIR /app
@@ -50,10 +47,10 @@ COPY src src
 COPY --from=docs /app/docs ./src/assets/docs
 COPY --from=api /app/lemmy-js-client/docs ./src/assets/api
 
-RUN yarn
+RUN yarn install --pure-lockfile
 RUN yarn build:prod
 
-FROM node:14-alpine as runner
+FROM node:alpine as runner
 COPY --from=builder /app/dist /app/dist
 COPY --from=builder /app/node_modules /app/node_modules
 

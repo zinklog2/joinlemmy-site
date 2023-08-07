@@ -3,8 +3,6 @@ import { AppDetails } from "./app-details";
 import { Helmet } from "inferno-helmet";
 import { i18n } from "../i18next";
 
-const title = i18n.t("apps_title");
-
 export class Apps extends Component<any, any> {
   constructor(props: any, context: any) {
     super(props, context);
@@ -15,6 +13,7 @@ export class Apps extends Component<any, any> {
   }
 
   render() {
+    const title = i18n.t("apps_title");
     return (
       <div>
         <Helmet title={title}>
@@ -52,16 +51,35 @@ export class Apps extends Component<any, any> {
               <AppDetails
                 name="Mlem"
                 description="A Lemmy Client for iOS."
-                link="https://github.com/buresdv/Mlem"
+                link="https://github.com/mormaer/Mlem"
                 icon="/static/assets/images/mlem.webp"
                 banner="/static/assets/images/mlem_screen.webp"
                 links={[
                   {
-                    link: "https://testflight.apple.com/join/xQfmkJhc",
+                    link: "https://testflight.apple.com/join/MelFP11Y",
                     icon: "appleinc",
                   },
                   {
                     link: "https://github.com/buresdv/Mlem",
+                    icon: "github",
+                  },
+                ]}
+              />
+            </div>
+            <div class="card col-6">
+              <AppDetails
+                name="Memmy"
+                description="A Lemmy Client built in React Native for iOS available on the App Store."
+                link="https://github.com/Memmy-App/memmy"
+                icon="/static/assets/images/memmy_icon.png"
+                banner="/static/assets/images/memmy_banner.webp"
+                links={[
+                  {
+                    link: "https://apps.apple.com/us/app/memmy-for-lemmy/id6450204299?platform=iphone",
+                    icon: "appleinc",
+                  },
+                  {
+                    link: "https://github.com/Memmy-App/memmy",
                     icon: "github",
                   },
                 ]}
